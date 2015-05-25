@@ -5,11 +5,21 @@ function DnvmTabExpansion($lastBlock) {
 
     $cmd = $lastBlock -replace "^dnvm\s*", ""
     switch -Regex ($cmd)  {
+
+        ##########################################
+        #
+        # dnvm <cmd>
+        
         # Handle dnvm <cmd>
         "^(?<cmd>\S*)$" {
             DebugMessage "DnvmExpansion: <cmd>; cmd=$($matches['cmd'])"
             $commands | filterMatches $matches['cmd'] 
         }
+
+        
+        ##########################################
+        #
+        # dnvm help <cmd>
 
         # Handle dnvm help <cmd>
         "^help (?<cmd>\S*)$" {
@@ -18,7 +28,10 @@ function DnvmTabExpansion($lastBlock) {
         }
 
 
-
+        ##########################################
+        #
+        # dnvm alias
+        
         # Handle dnvm alias <name>
         "^alias (?<name>\S*)$" {
             DebugMessage "DnvmExpansion: alias <name>; name=$($matches['name'])"
@@ -49,8 +62,41 @@ function DnvmTabExpansion($lastBlock) {
             DebugMessage "DnvmExpansion: alias <name> <version> -r <runtime>; name=$($matches['name']); version=$($matches['version']); runtime=$($matches['runtime'])"
             @('clr', 'coreclr') | filterMatches $matches['runtime'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
         }
+        
+
+        ##########################################
+        #
+        # TODO: dnvm install
 
 
+
+        ##########################################
+        #
+        # TODO: dnvm list
+
+
+
+        ##########################################
+        #
+        # TODO: dnvm name
+
+
+
+        ##########################################
+        #
+        # TODO: dnvm setup 
+
+
+
+        ##########################################
+        #
+        # TODO: dnvm upgrade
+
+
+
+        ##########################################
+        #
+        # TODO: dnvm use
 
 
         default {
