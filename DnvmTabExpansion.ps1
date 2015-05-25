@@ -135,7 +135,7 @@ $commands = @('alias', 'help', 'install', 'list', 'name', 'setup', 'upgrade', 'u
 
 function filterMatches($filter){
   if($filter) {
-     $input| ? { $_.StartsWith($filter) } | sort  
+     $input| ? { $_.StartsWith($filter, "InvariantCultureIgnoreCase") } | sort  
   }
   else {
     $input | % { $_.Trim() } | sort
