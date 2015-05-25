@@ -84,8 +84,13 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
-        # TODO: dnvm setup 
+        # dnvm setup 
 
+        # Handle dnvm setup <name> -<switch>
+        "^setup.*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: setup <name> -<switch>; name=$($matches['name']); switch=$($matches['switch'])"
+            @('-SkipUserEnvironmentInstall') | filterMatches $matches['switch']
+        }
 
 
         ##########################################
@@ -96,7 +101,7 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
-        # TODO: dnvm use
+        # dnvm use
 
         # Handle dnvm use<name>
         "^use (?<name>\S*)$" {
