@@ -66,9 +66,35 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
-        # TODO: dnvm install
+        # dnvm install
 
-
+        # Handle dnvm install <name>
+        "^install (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: install <name>; name=$($matches['name'])"
+            # TODO - name can be path to .nupkg, 'latest', or a version!
+            # for now, just disable tab expansion?!
+            ''
+        }
+        # Handle dnvm install <name> [switches...] -<switch>
+        "^install (?<name>\S*).*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: install <name> -<switch>; name=$($matches['name']); switch=$($matches['switch'])"
+            @('-arch', '-r', '-a', '-f', '-Proxy', '-NoNative', 'Ngen', '-Persistent') | filterMatches $matches['switch']
+        }
+        # Handle dnvm install <name> [switches...] -arch <arch>
+        "^install (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: install <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
+            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm install <name> [switches...] -r <runtime>
+        "^install (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: install <name> -r <runtime>; name=$($matches['name']); runtime=$($matches['runtime'])"
+            @('clr', 'coreclr') | filterMatches $matches['runtime'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
+        }
+        # Handle dnvm install <name> [switches...] -r <runtime>
+        "^install (?<name>\S*).*\s-a\s*(?<alias>\S*)$" {
+            DebugMessage "DnvmExpansion: install <name> -a <alias>; name=$($matches['name']); alias=$($matches['alias'])"
+            getAliases | filterMatches $matches['alias'] 
+        }
 
         ##########################################
         #
@@ -82,9 +108,9 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
-        # TODO: dnvm name
+        # dnvm name
 
-         # Handle dnvm name <name>
+        # Handle dnvm name <name>
         "^name (?<name>\S*)$" {
             DebugMessage "DnvmExpansion: name <name>; name=$($matches['name'])"
             getAliasesAndVersions | filterMatches $matches['name']
@@ -119,8 +145,28 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
-        # TODO: dnvm upgrade
+        # dnvm upgrade
 
+        # Handle dnvm upgrade <alias>
+        "^upgrade (?<alias>\S*)$" {
+            DebugMessage "DnvmExpansion: upgrade <alias>; alias=$($matches['alias'])"
+            getAliases | filterMatches $matches['alias'] 
+        }
+        # Handle dnvm upgrade <alias> [switches...] -<switch>
+        "^upgrade ((?<alias>\S*)?.*\s)?(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: upgrade <alias> -<switch>; alias=$($matches['alias']); switch=$($matches['switch'])"
+            @('-arch', '-r', '-f', '-Proxy', '-NoNative', 'Ngen') | filterMatches $matches['switch']
+        }
+        # Handle dnvm upgrade <alias> [switches...] -arch <arch>
+        "^upgrade ((?<alias>\S*)?.*\s)?-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: upgrade <alias> -arch <arch>; alias=$($matches['alias']); arch=$($matches['arch'])"
+            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm upgrade <alias> [switches...] -r <runtime>
+        "^upgrade ((?<alias>\S*)?.*\s)?-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: upgrade <alias> -r <runtime>; alias=$($matches['alias']); runtime=$($matches['runtime'])"
+            @('clr', 'coreclr') | filterMatches $matches['runtime'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
+        }
 
 
         ##########################################
