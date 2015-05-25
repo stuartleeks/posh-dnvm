@@ -98,6 +98,27 @@ function DnvmTabExpansion($lastBlock) {
         #
         # TODO: dnvm use
 
+        # Handle dnvm use<name>
+        "^use (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: use <name>; name=$($matches['name'])"
+            getAliasesAndVersions | filterMatches $matches['name']
+        }
+        # Handle dnvm use <name> [switches...] -<switch>
+        "^use (?<name>\S*).*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: use <name> -<switch>; name=$($matches['name']); switch=$($matches['switch'])"
+            @('-arch', '-r', '-p') | filterMatches $matches['switch']
+        }
+        # Handle dnvm use <name> [switches...] -arch <arch>
+        "^use (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: use <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
+            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm use <name> [switches...] -r <runtime>
+        "^use (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: use <name> -r <runtime>; name=$($matches['name']); runtime=$($matches['runtime'])"
+            @('clr', 'coreclr') | filterMatches $matches['runtime'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
+        }
+
 
         default {
             DebugMessage "DnvmExpansion - not handled: $cmd"
@@ -116,6 +137,11 @@ function filterMatches($filter){
   }
 }
 
+function getAliasesAndVersions(){
+    $aliases = getAliases
+    $versions = getVersions
+    $aliases + $versions
+}
 function getAliases(){
     dnvm list -PassThru | ?{$_.Alias -ne ""} | %{$_.Alias}
 }
