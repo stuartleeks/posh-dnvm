@@ -3,56 +3,79 @@ function DebugMessage($message){
 }
 function DnvmTabExpansion($lastBlock) {
 
-    DebugMessage "DnvmExpansion: $lastBlock"
     $cmd = $lastBlock -replace "^dnvm\s*", ""
-    switch -Regex ($cmd) {
-    
+    switch -Regex ($cmd)  {
         # Handle dnvm <cmd>
         "^(?<cmd>\S*)$" {
-            dnvmCommands $matches['cmd']
+            DebugMessage "DnvmExpansion: <cmd>; cmd=$($matches['cmd'])"
+            $commands | filterMatches $matches['cmd'] 
         }
 
         # Handle dnvm help <cmd>
         "^help (?<cmd>\S*)$" {
-            dnvmCommands $matches['cmd'] | ?{$_ -ne 'help'}
+            DebugMessage "DnvmExpansion: help <cmd>; cmd=$($matches['cmd'])"
+            $commands | filterMatches $matches['cmd'] | ?{$_ -ne 'help'}
         }
 
+
+
+        # Handle dnvm alias <name>
+        "^alias (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name>; name=$($matches['name'])"
+            getAliases | filterMatches $matches['name']
+        }
         # Handle dnvm alias -d <name>
         "^alias -d (?<name>\S*)$" {
-            dnvmAliases $matches['name']
+            DebugMessage "DnvmExpansion: alias -d <name>; name=$($matches['name'])"
+            getAliases | filterMatches $matches['name']
+        }
+        # Handle dnvm alias <name> <version>
+        "^alias (?<name>\S*)\s+(?<version>\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name> <version>; name=$($matches['name']); version=$($matches['version'])"
+            getVersions | filterMatches $matches['version']
+        }
+        # Handle dnvm alias <name> <version> [switches...] -<switch>
+        "^alias (?<name>\S*)\s+(?<version>\S*).*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name> <version> -<switch>; name=$($matches['name']); version=$($matches['version']); switch=$($matches['switch'])"
+            @('-arch', '-r') | filterMatches $matches['switch']
+        }
+        # Handle dnvm alias <name> <version> [switches...] -arch <arch>
+        "^alias (?<name>\S*)\s+(?<version>\S*).*\s-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name> <version> -arch <arch>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch'])"
+            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm alias <name> <version> [switches...] -r <runtime>
+        "^alias (?<name>\S*)\s+(?<version>\S*).*\s-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name> <version> -r <runtime>; name=$($matches['name']); version=$($matches['version']); runtime=$($matches['runtime'])"
+            @('clr', 'coreclr') | filterMatches $matches['runtime'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
         }
 
 
 
+
+        default {
+            DebugMessage "DnvmExpansion - not handled: $cmd"
+        }
     }
 }
 
 $commands = @('alias', 'help', 'install', 'list', 'name', 'setup', 'upgrade', 'use');
 
-function dnvmCommands($filter) {
-  DebugMessage "dnvmCommands: $filter"
-
+function filterMatches($filter){
   if($filter) {
-     $commands | ? { $_.StartsWith($filter) } | sort  
+     $input| ? { $_.StartsWith($filter) } | sort  
   }
   else {
-    $commands | % { $_.Trim() } | sort
-  }
-}
-
-function dnvmAliases($filter) {
-  DebugMessage "dnvmAliases: $filter"
-
-  if($filter) {
-     getAliases | ? { $_.StartsWith($filter) } | sort  
-  }
-  else {
-    getAliases | % { $_.Trim() } | sort
+    $input | % { $_.Trim() } | sort
   }
 }
 
 function getAliases(){
     dnvm list -PassThru | ?{$_.Alias -ne ""} | %{$_.Alias}
+}
+
+function getVersions(){
+    dnvm list -PassThru | select -Unique -ExpandProperty Version
 }
 
 # TODO - look at posh-git/posh-hg to link with powertab
