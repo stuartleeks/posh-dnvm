@@ -16,13 +16,12 @@ function FormatResult ($result){
 	process {
 		$lineNumber = GetLineNumber $_.StackTrace
 		$file = GetFileName $_.StackTrace | Resolve-Path -Relative
-		# $file = "C:\Users\Stuart\Source\Repos\posh-dnvm\DnvmTabExpansion.Tests.ps1" | Resolve-Path -Relative
 		$collapsedMessage = $_.FailureMessage -replace "`n"," "
 		$testDescription = "$($_.Describe):$($_.Name)"
 		"$file;$lineNumber;${testDescription}:$collapsedMessage"
 	}
 }
 Write-Host "Running tests..."
-$results = Invoke-Pester -PassThru #-Quiet
+$results = Invoke-Pester -PassThru # can use -Quiet to suppress the default Pester output
 $results.TestResult | ?{ -not $_.Passed} | FormatResult
 Write-Host "Done"

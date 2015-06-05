@@ -5,7 +5,6 @@
 // ${fileDirname}: the current opened file's dirname
 // ${fileExtname}: the current opened file's extension
 // ${cwd}: the current working directory of the spawned process
-
 {
 	"version": "0.1.0",
 	"command": "powershell",
@@ -32,36 +31,6 @@
 					"message": 3					
 				}
 			}
-	// "tasks": [
-	// 	{
-	// 		"taskName": "Test",
-	// 		"isTestCommand": true,
-	// 		"args": [
-	// 			// weird as it seems, we're passing these as separate params as otherwise 
-	// 			// VSCode will put them in quotes and then PowerShell no longer recognises 
-	// 			// them as switches!
-	// 			"-ExecutionPolicy", "RemoteSigned",
-	// 			"-Command", "pester ${workspaceRoot}\\DnvmTabExpansion.Tests.ps1"
-	// 		],
-	// 		"problemMatcher": {
-	// 			"owner": "pester",
-	// 			"pattern": [
-	// 				{
-	// 					"regexp": "^Describing (.*)$",
-	// 					"message": 1
-	// 				},
-	// 				{
-	// 					"regexp": "^\\s*\\[-\\]",
-	// 					"message": 1
-	// 				},
-	// 				{
-	// 					"regexp": "\\sat line: (\\d.*) in (.*)$",
-	// 					"line": 1,
-	// 					"file": 2,
-	// 					"loop": true
-	// 				}					
-	// 			]
-	// 		}
 		}
 	]
 }
