@@ -1,0 +1,1 @@
+choco install posh-dnvm -source "$pwd" -pre -force

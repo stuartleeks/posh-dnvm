@@ -12,7 +12,7 @@
 	"showOutput": "always",
 	"suppressTaskName": true,
 	"tasks": [
-			{
+		{
 			"taskName": "Test",
 			"isTestCommand": true,
 			"args": [
@@ -31,6 +31,14 @@
 					"message": 3					
 				}
 			}
+		},
+		{
+			"taskName": "Package",
+			"isBuildCommand": true,
+			"args": [
+				"-ExecutionPolicy", "RemoteSigned",
+				"-Command", "${workspaceRoot}\\BuildPackage.ps1"
+			]
 		}
 	]
 }

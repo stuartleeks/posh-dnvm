@@ -229,10 +229,11 @@ function getRuntimes(){
 }
 
 # TODO - look at posh-git/posh-hg to link with powertab
-
+DebugMessage "Installing: Test DnvmTabExpansionBackup function"
 if(-not (Test-Path Function:\DnvmTabExpansionBackup)){
 
     if (Test-Path Function:\TabExpansion) {
+        DebugMessage "Installing: Backup TabExpansion function"
         Rename-Item Function:\TabExpansion DnvmTabExpansionBackup
     }
 
