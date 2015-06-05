@@ -3,7 +3,15 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 . "$here\$sut"
 
 Import-Module "$here\PesterMatchArray.psm1" -Force
-
+# Failing tests to test the problemMatcher when running tests in VSCode :-)
+# Describe "failing test :-)" {
+#     It "fails!" {
+#         $false | Should Be $true
+#     }
+#     It "fails again!" {
+#         $false | Should Be $true
+#     }
+# }
 Describe "dnvm <cmd>" {
     It "returns a full list when no input" {
         ,(DnvmTabExpansion "dnvm ") | Should MatchArray @('alias', 'help', 'install', 'list', 'name', 'setup', 'upgrade', 'use')
