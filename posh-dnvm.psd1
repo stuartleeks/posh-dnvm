@@ -78,7 +78,7 @@ VariablesToExport = '*'
 AliasesToExport = '*'
 
 # List of all modules packaged with this module
-ModuleList = @('DnvmTabExtension.psm1')
+ModuleList = @('posh-dnvm.psm1')
 
 # List of all files packaged with this module
 # FileList = @()
