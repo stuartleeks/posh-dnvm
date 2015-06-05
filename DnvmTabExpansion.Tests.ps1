@@ -2,7 +2,7 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 . "$here\$sut"
 
-Import-Module "$here\PesterMatchArray.psd1" -Force
+Import-Module "$here\PesterMatchArray.psm1" -Force
 
 Describe "dnvm <cmd>" {
     It "returns a full list when no input" {
