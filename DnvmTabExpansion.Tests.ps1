@@ -3,8 +3,8 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 . "$here\$sut"
 
 Import-Module "$here\PesterMatchArray.psm1" -Force
-# Failing tests to test the problemMatcher when running tests in VSCode :-)
-# Describe "failing test :-)" {
+# # Failing tests to test the problemMatcher when running tests in VSCode :-)
+# Describe "failing test" {
 #     It "fails!" {
 #         $false | Should Be $true
 #     }
