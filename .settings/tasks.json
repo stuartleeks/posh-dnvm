@@ -9,7 +9,7 @@
 	"version": "0.1.0",
 	"command": "powershell",
 	"isShellCommand": true,
-	"showOutput": "always",
+	"showOutput": "silent",
 	"suppressTaskName": true,
 	"tasks": [
 		{
@@ -25,7 +25,7 @@
 			"problemMatcher": {
 				"owner": "pester",
 				"pattern": {
-					"regexp": "(.*);(.*);(.*)",
+					"regexp": "(.*);(.*);(.*;.*)",
 					"file": 1,
 					"line": 2,
 					"message": 3					
