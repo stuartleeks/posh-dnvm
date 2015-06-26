@@ -14,19 +14,19 @@ Import-Module "$here\PesterMatchArray.psm1" -Force
 # }
 Describe "dnvm <cmd>" {
     It "returns a full list when no input" {
-        ,(DnvmTabExpansion "dnvm ") | Should MatchArray @('alias', 'help', 'install', 'list', 'name', 'setup', 'upgrade', 'use')
+        ,(DnvmTabExpansion "dnvm ") | Should MatchArray @('alias', 'exec', 'help', 'install', 'list', 'run', 'setup', 'update-self', 'upgrade', 'use')
     }
     It "returns a partial list of matching items"{
-        ,(DnvmTabExpansion "dnvm u") | Should MatchArray @('upgrade', 'use')
+        ,(DnvmTabExpansion "dnvm u") | Should MatchArray @('update-self', 'upgrade', 'use')
     }
 }
 
 Describe "dnvm help <cmd>" {
     It "returns a full list when no input" {
-        ,(DnvmTabExpansion "dnvm help ") | Should MatchArray @('alias', 'install', 'list', 'name', 'setup', 'upgrade', 'use')
+        ,(DnvmTabExpansion "dnvm help ") | Should MatchArray @('alias', 'exec', 'install', 'list', 'run', 'setup', 'update-self', 'upgrade', 'use')
     }
     It "returns a partial list of matching items"{
-        ,(DnvmTabExpansion "dnvm help u") | Should MatchArray @('upgrade', 'use')
+        ,(DnvmTabExpansion "dnvm help u") | Should MatchArray @('update-self', 'upgrade', 'use')
     }
 }
 
@@ -86,6 +86,18 @@ Describe "dnvm alias *" {
         }
     }
 }
+Describe "dnvm exec *" {
+    Mock getAliases { @('alias1', 'alias2', 'anotherAlias') }
+    Mock getVersions { @('1.0.0-beta4', '1.0.1', '2.0.0') }
+    Context "general name completion" {
+        It "completes names (alias/version)" {
+            ,(DnvmTabExpansion "dnvm exec ") | Should MatchArray @('alias1', 'alias2', 'anotherAlias', '1.0.0-beta4', '1.0.1', '2.0.0')      
+        }
+        It "completes names (alias/version) filtered to matching" {
+            ,(DnvmTabExpansion "dnvm exec al") | Should MatchArray @('alias1', 'alias2')      
+        }
+    }
+}
 Describe "dnvm install *" {
     Context "VersionNuPkgOrAlias" {
         It "completion suppressed " {
@@ -94,7 +106,7 @@ Describe "dnvm install *" {
     }
     Context "install <name> -switches" {
         It "lists all switches when only switch char is specified" {
-            ,(DnvmTabExpansion "dnvm install name -") | Should MatchArray @('-arch', '-r', '-a', '-f', '-Proxy', '-NoNative', '-Ngen', '-Persistent')
+            ,(DnvmTabExpansion "dnvm install name -") | Should MatchArray @('-arch', '-r', '-a', '-f', '-Proxy', '-NoNative', '-Ngen', '-Persistent', '-Unstable')
         }
         It "lists matching switches when partial is specified" {
             ,(DnvmTabExpansion "dnvm install name -N") | Should MatchArray @('-NoNative', '-Ngen')
@@ -145,45 +157,15 @@ Describe "dnvm list *" {
         }        
     }
 }
-Describe "dnvm name *" {
+Describe "dnvm run *" {
     Mock getAliases { @('alias1', 'alias2', 'anotherAlias') }
     Mock getVersions { @('1.0.0-beta4', '1.0.1', '2.0.0') }
     Context "general name completion" {
         It "completes names (alias/version)" {
-            ,(DnvmTabExpansion "dnvm name ") | Should MatchArray @('alias1', 'alias2', 'anotherAlias', '1.0.0-beta4', '1.0.1', '2.0.0')      
+            ,(DnvmTabExpansion "dnvm run ") | Should MatchArray @('alias1', 'alias2', 'anotherAlias', '1.0.0-beta4', '1.0.1', '2.0.0')      
         }
         It "completes names (alias/version) filtered to matching" {
-            ,(DnvmTabExpansion "dnvm name al") | Should MatchArray @('alias1', 'alias2')      
-        }
-    }
-    Context "name  -switches" {
-        It "lists all switches when only switch char is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -") | Should MatchArray @('-arch', '-r')
-        }
-        It "lists matching switches when partial is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -a") | Should MatchArray @('-arch')
-        }        
-    }
-    Context "name <name> -arch" {
-        It "lists all architectures when nothing is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -arch ") | Should MatchArray @('x64', 'x86')
-        }
-        It "lists matching architectures when partial is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -arch x8") | Should MatchArray @('x86')
-        }
-        It "lists when combined with other switches" {
-            ,(DnvmTabExpansion "dnvm name somename -foo -arch ") | Should MatchArray @('x64', 'x86')
-        }
-    }
-    Context "name <name> -r" {
-        It "lists all runtimes when nothing is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -r ") | Should MatchArray @('coreclr', 'clr')
-        }
-        It "lists matching runtimes when partial is specified" {
-            ,(DnvmTabExpansion "dnvm name somename -r cor") | Should MatchArray @('coreclr')
-        }
-        It "lists when combined with other switches" {
-            ,(DnvmTabExpansion "dnvm name somename -foo -r ") | Should MatchArray @('coreclr', 'clr')
+            ,(DnvmTabExpansion "dnvm run al") | Should MatchArray @('alias1', 'alias2')      
         }
     }
 }
@@ -197,6 +179,7 @@ Describe "dnvm setup *" {
         }        
     }
 }
+# dnvm update-self doesn't have any completable args 
 Describe "dnvm upgrade *" {
     Mock getAliases { @('alias1', 'alias2', 'anotherAlias') }
     Mock getVersions { @('1.0.0-beta4', '1.0.1', '2.0.0') }
@@ -210,7 +193,7 @@ Describe "dnvm upgrade *" {
     }
     Context "upgrade <name> -switches" {
         It "lists all switches when only switch char is specified" {
-            ,(DnvmTabExpansion "dnvm upgrade name -") | Should MatchArray @('-arch', '-r', '-f', '-Proxy', '-NoNative', '-Ngen')
+            ,(DnvmTabExpansion "dnvm upgrade name -") | Should MatchArray @('-arch', '-r', '-f', '-Proxy', '-NoNative', '-Ngen', '-Unstable')
         }
         It "lists matching switches when partial is specified" {
             ,(DnvmTabExpansion "dnvm upgrade name -N") | Should MatchArray @('-NoNative', '-Ngen')

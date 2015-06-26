@@ -63,6 +63,17 @@ function DnvmTabExpansion($lastBlock) {
             getRuntimes | filterMatches $matches['runtime'] 
         }
         
+        
+        ##########################################
+        #
+        # dnvm exec
+
+        # Handle dnvm exec <VersionOrAlias>
+        "^exec (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: exec <VersionOrAlias>; name=$($matches['name'])"
+            getAliasesAndVersions | filterMatches $matches['name']
+        }
+        
 
         ##########################################
         #
@@ -78,7 +89,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm install <name> [switches...] -<switch>
         "^install (?<name>\S*).*\s(?<switch>-\S*)$" {
             DebugMessage "DnvmExpansion: install <name> -<switch>; name=$($matches['name']); switch=$($matches['switch'])"
-            @('-arch', '-r', '-a', '-f', '-Proxy', '-NoNative', '-Ngen', '-Persistent') | filterMatches $matches['switch']
+            @('-arch', '-r', '-a', '-f', '-Proxy', '-NoNative', '-Ngen', '-Persistent', '-Unstable') | filterMatches $matches['switch']
         }
         # Handle dnvm install <name> [switches...] -arch <arch>
         "^install (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
@@ -134,6 +145,17 @@ function DnvmTabExpansion($lastBlock) {
 
         ##########################################
         #
+        # dnvm run
+
+        # Handle dnvm run <VersionOrAlias>
+        "^run (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: run <VersionOrAlias>; name=$($matches['name'])"
+            getAliasesAndVersions | filterMatches $matches['name']
+        }
+
+
+        ##########################################
+        #
         # dnvm setup 
 
         # Handle dnvm setup -<switch>
@@ -155,7 +177,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm upgrade <alias> [switches...] -<switch>
         "^upgrade ((?<alias>\S*)?.*\s)?(?<switch>-\S*)$" {
             DebugMessage "DnvmExpansion: upgrade <alias> -<switch>; alias=$($matches['alias']); switch=$($matches['switch'])"
-            @('-arch', '-r', '-f', '-Proxy', '-NoNative', '-Ngen') | filterMatches $matches['switch']
+            @('-arch', '-r', '-f', '-Proxy', '-NoNative', '-Ngen', '-Unstable') | filterMatches $matches['switch']
         }
         # Handle dnvm upgrade <alias> [switches...] -arch <arch>
         "^upgrade ((?<alias>\S*)?.*\s)?-arch\s*(?<arch>\S*)$" {
@@ -173,22 +195,22 @@ function DnvmTabExpansion($lastBlock) {
         #
         # dnvm use
 
-        # Handle dnvm use <name>
+        # Handle dnvm use <VersionOrAlias>
         "^use (?<name>\S*)$" {
             DebugMessage "DnvmExpansion: use <name>; name=$($matches['name'])"
             getAliasesAndVersions | filterMatches $matches['name']
         }
-        # Handle dnvm use <name> [switches...] -<switch>
+        # Handle dnvm use <VersionOrAlias> [switches...] -<switch>
         "^use (?<name>\S*).*\s(?<switch>-\S*)$" {
             DebugMessage "DnvmExpansion: use <name> -<switch>; name=$($matches['name']); switch=$($matches['switch'])"
             @('-arch', '-r', '-p') | filterMatches $matches['switch']
         }
-        # Handle dnvm use <name> [switches...] -arch <arch>
+        # Handle dnvm use <VersionOrAlias> [switches...] -arch <arch>
         "^use (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
             DebugMessage "DnvmExpansion: use <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
             @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
         }
-        # Handle dnvm use <name> [switches...] -r <runtime>
+        # Handle dnvm use <VersionOrAlias> [switches...] -r <runtime>
         "^use (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
             DebugMessage "DnvmExpansion: use <name> -r <runtime>; name=$($matches['name']); runtime=$($matches['runtime'])"
             getRuntimes | filterMatches $matches['runtime']
@@ -201,7 +223,7 @@ function DnvmTabExpansion($lastBlock) {
     }
 }
 
-$commands = @('alias', 'help', 'install', 'list', 'name', 'setup', 'upgrade', 'use');
+$commands = @('alias', 'exec', 'help', 'install', 'list', 'run', 'setup', 'update-self', 'upgrade', 'use');
 
 function filterMatches($filter){
   if($filter) {
