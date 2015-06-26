@@ -1,0 +1,194 @@
+commands:
+    alias           Lists and manages aliases
+    exec            Executes the specified command in a sub-shell where the PATH has been augmented to include the speci
+fied DNX
+    help            Displays a list of commands, and help for specific commands
+    install         Installs a version of the runtime
+    list            Lists available runtimes
+    run             Locates the dnx.exe for the specified version or alias and executes it, providing the remaining argu
+ments to dnx.exe
+    setup           Installs the version manager into your User profile directory
+    update-self     Updates DNVM to the latest version.
+    upgrade         Installs the latest version of the runtime and reassigns the specified alias to point at it
+    use             Adds a runtime to the PATH environment variable for your current shell
+
+
+
+
+dnvm alias
+  Lists and manages aliases
+
+usage:
+  dnvm alias -d <Name>
+  dnvm alias <Name> <Version> [-arch <Architecture>] [-r <Runtime>]
+  dnvm alias [<Name>]
+
+options:
+  -d                   Set this switch to delete the alias with the specified name
+  <Name>               The name of the alias to read/create/delete
+  <Version>            The version to assign to the new alias
+  -arch                The architecture of the runtime to assign to this alias
+  -r                   The flavor of the runtime to assign to this alias
+
+remarks:
+  If no arguments are provided, this command lists all aliases. If <Name> is provided,
+  the value of that alias, if present, is displayed. If <Name> and <Version> are
+  provided, the alias <Name> is set to the runtime defined by <Version>, <Architecture>
+  (defaults to 'x86') and <Runtime> (defaults to 'clr').
+  Finally, if the '-d' switch is provided, the alias <Name> is deleted, if it exists.
+  
+  
+  
+
+
+dnvm exec
+  Executes the specified command in a sub-shell where the PATH has been augmented to include the specified DNX
+
+usage:
+  dnvm exec <VersionOrAlias> [<Command>] [<Arguments>]
+
+options:
+  <VersionOrAlias>     The version of alias of the runtime to make active in the sub-shell
+  <Command>            The command to execute in the sub-shell
+  <Arguments>
+
+
+
+
+dnvm install
+  Installs a version of the runtime
+
+usage:
+  dnvm install [<VersionNuPkgOrAlias>] [-arch <Architecture>] [-r <Runtime>] [-a <Alias>] [-f] [-Proxy <Proxy>] [-NoNati
+ve] [-Ngen] [-Persistent] [-Unstable]
+
+options:
+  <VersionNuPkgOrAlias> The version to install from the current channel, the path to a '.nupkg' file to install, 'latest
+' to
+install the latest available version from the current channel, or an alias value to install an alternate
+runtime or architecture flavor of the specified alias.
+  -arch                The processor architecture of the runtime to install (default: x86)
+  -r                   The runtime flavor to install (default: clr)
+  -a                   Set alias <Alias> to the installed runtime
+  -f                   Overwrite an existing runtime if it already exists
+  -Proxy               Use the given address as a proxy when accessing remote server
+  -NoNative            Skip generation of native images
+  -Ngen                For CLR flavor only. Generate native images for runtime libraries on Desktop CLR to improve start
+up time. This option requires elevated privilege and will be automatically turned on if the script is running in adminis
+trative mode. To opt-out in administrative mode, use -NoNative switch.
+  -Persistent          Make the installed runtime useable across all processes run by the current user
+  -Unstable            Upgrade from our unstable dev feed. This will give you the latest development version of the runt
+ime.
+
+remarks:
+  A proxy can also be specified by using the 'http_proxy' environment variable
+
+
+
+
+
+dnvm-list
+  Lists available runtimes
+
+usage:
+  dnvm list [-PassThru]
+
+options:
+  -PassThru            Set this switch to return unformatted powershell objects for use in scripting
+
+
+
+
+
+
+
+dnvm run
+  Locates the dnx.exe for the specified version or alias and executes it, providing the remaining arguments to dnx.exe
+
+usage:
+  dnvm run <VersionOrAlias> [<DnxArguments>]
+
+options:
+  <VersionOrAlias>     The version of alias of the runtime to execute
+  <DnxArguments>       The arguments to pass to dnx.exe
+  
+  
+  
+  
+  
+  dnvm setup
+  Installs the version manager into your User profile directory
+
+usage:
+  dnvm setup [-SkipUserEnvironmentInstall]
+
+options:
+  -SkipUserEnvironmentInstall Set this switch to skip configuring the user-level DNX_HOME and PATH environment variables
+  
+  
+  
+  
+  
+  
+  dnvm update-self
+  Updates DNVM to the latest version.
+
+usage:
+  dnvm update-self [<Proxy>]
+
+options:
+  <Proxy>              Use the given address as a proxy when accessing remote server
+  
+  
+  
+  
+  
+  
+  dnvm upgrade
+  Installs the latest version of the runtime and reassigns the specified alias to point at it
+
+usage:
+  dnvm upgrade [<Alias>] [-arch <Architecture>] [-r <Runtime>] [-f] [-Proxy <Proxy>] [-NoNative] [-Ngen] [-Unstable]
+
+options:
+  <Alias>              The alias to upgrade (default: 'default')
+  -arch                The processor architecture of the runtime to install (default: x86)
+  -r                   The runtime flavor to install (default: clr)
+  -f                   Overwrite an existing runtime if it already exists
+  -Proxy               Use the given address as a proxy when accessing remote server
+  -NoNative            Skip generation of native images
+  -Ngen                For CLR flavor only. Generate native images for runtime libraries on Desktop CLR to improve start
+up time. This option requires elevated privilege and will be automatically turned on if the script is running in adminis
+trative mode. To opt-out in administrative mode, use -NoNative switch.
+  -Unstable            Upgrade from our unstable dev feed. This will give you the latest development version of the runt
+ime.
+
+
+
+
+dnvm use
+  Adds a runtime to the PATH environment variable for your current shell
+
+usage:
+  dnvm use <VersionOrAlias> [-arch <Architecture>] [-r <Runtime>] [-p]
+
+options:
+  <VersionOrAlias>     The version or alias of the runtime to place on the PATH
+  -arch                The processor architecture of the runtime to place on the PATH (default: x86, or whatever the ali
+as specifies in the case of use-ing an alias)
+  -r                   The runtime flavor of the runtime to place on the PATH (default: clr, or whatever the alias speci
+fies in the case of use-ing an alias)
+  -p                   Make the change persistent across all processes run by the current user
+  
+  
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
