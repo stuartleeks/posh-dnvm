@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>posh-dnvm</id>
-        <version>1.0.0-beta4</version>
+        <version>1.0.0-beta5</version>
         <title>posh-dnvm</title>
         <authors>Stuart Leeks</authors>
         <licenseUrl>https://github.com/stuartleeks/posh-dnvm/blob/master/LICENSE.MD</licenseUrl>
