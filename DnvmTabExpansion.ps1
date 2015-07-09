@@ -19,17 +19,6 @@ function DnvmTabExpansion($lastBlock) {
         
         ##########################################
         #
-        # dnvm help <cmd>
-
-        # Handle dnvm help <cmd>
-        "^help (?<cmd>\S*)$" {
-            DebugMessage "DnvmExpansion: help <cmd>; cmd=$($matches['cmd'])"
-            $commands | filterMatches $matches['cmd'] | ?{$_ -ne 'help'}
-        }
-
-
-        ##########################################
-        #
         # dnvm alias
         
         # Handle dnvm alias <name>
@@ -47,19 +36,14 @@ function DnvmTabExpansion($lastBlock) {
             DebugMessage "DnvmExpansion: alias <name> <version>; name=$($matches['name']); version=$($matches['version'])"
             getVersions | filterMatches $matches['version']
         }
-        # Handle dnvm alias <name> <version> [switches...] -<switch>
-        "^alias (?<name>\S*)\s+(?<version>\S*).*\s(?<switch>-\S*)$" {
-            DebugMessage "DnvmExpansion: alias <name> <version> -<switch>; name=$($matches['name']); version=$($matches['version']); switch=$($matches['switch'])"
-            @('-arch', '-r') | filterMatches $matches['switch']
+        # Handle dnvm alias <name> <version> <arch>
+        "^alias (?<name>\S*)\s+(?<version>\S*)\s+(?<arch>\S*)$" {
+           DebugMessage "DnvmExpansion: alias <name> <version> <arch>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch'])"
+           getArchitectures | filterMatches $matches['arch']
         }
-        # Handle dnvm alias <name> <version> [switches...] -arch <arch>
-        "^alias (?<name>\S*)\s+(?<version>\S*).*\s-arch\s*(?<arch>\S*)$" {
-            DebugMessage "DnvmExpansion: alias <name> <version> -arch <arch>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch'])"
-            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
-        }
-        # Handle dnvm alias <name> <version> [switches...] -r <runtime>
-        "^alias (?<name>\S*)\s+(?<version>\S*).*\s-r\s*(?<runtime>\S*)$" {
-            DebugMessage "DnvmExpansion: alias <name> <version> -r <runtime>; name=$($matches['name']); version=$($matches['version']); runtime=$($matches['runtime'])"
+        # Handle dnvm alias <name> <version> <arch> <runtime>
+        "^alias (?<name>\S*)\s+(?<version>\S*)\s+(?<arch>\S*)\s+(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: alias <name> <version> <arch> <runtime>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch']); runtime=$($matches['runtime'])"
             getRuntimes | filterMatches $matches['runtime'] 
         }
         
@@ -73,7 +57,45 @@ function DnvmTabExpansion($lastBlock) {
             DebugMessage "DnvmExpansion: exec <VersionOrAlias>; name=$($matches['name'])"
             getAliasesAndVersions | filterMatches $matches['name']
         }
+        "^exec (?<name>\S*)$" {
+            DebugMessage "DnvmExpansion: exec <VersionOrAlias>; name=$($matches['name'])"
+            getAliasesAndVersions | filterMatches $matches['name']
+        }
+        # Handle dnvm exec <cmd> <version> [switches...] -<switch>
+        "^exec (?<name>\S*)\s+(?<version>\S*).*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: exec <name> <version> -<switch>; name=$($matches['name']); version=$($matches['version']); switch=$($matches['switch'])"
+            @('-arch', '-r') | filterMatches $matches['switch']
+        }
+        # Handle dnvm exec <name> <version> [switches...] -arch <arch>
+        "^exec (?<name>\S*)\s+(?<version>\S*).*\s-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: exec <name> <version> -arch <arch>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch'])"
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm exec <name> <version> [switches...] -r <runtime>
+        "^exec (?<name>\S*)\s+(?<version>\S*).*\s-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: exec <name> <version> -r <runtime>; name=$($matches['name']); version=$($matches['version']); runtime=$($matches['runtime'])"
+            getRuntimes | filterMatches $matches['runtime'] 
+        }        
         
+        ##########################################
+        #
+        # dnvm help <cmd>
+
+        # Handle dnvm help <cmd>
+        "^help (?<cmd>\S*)$" {
+            DebugMessage "DnvmExpansion: help <cmd>; cmd=$($matches['cmd'])"
+            $commands | filterMatches $matches['cmd'] | ?{$_ -ne 'help'}
+        }
+        # Handle dnvm help -<switch>
+        "^help.*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: help -<switch>; switch=$($matches['switch'])"
+            @('-PassThru') | filterMatches $matches['switch']
+        }
+        # Handle dnvm help cmd -<switch>
+        "^help\s+(?<switch>-\S*)\s+(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: help <cmd> -<switch>; cmd=$($matches['cmd']); switch=$($matches['switch'])"
+            @('-PassThru') | filterMatches $matches['switch']
+        }
 
         ##########################################
         #
@@ -94,7 +116,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm install <name> [switches...] -arch <arch>
         "^install (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
             DebugMessage "DnvmExpansion: install <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
-            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
         }
         # Handle dnvm install <name> [switches...] -r <runtime>
         "^install (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
@@ -134,7 +156,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm name <name> [switches...] -arch <arch>
         "^name (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
             DebugMessage "DnvmExpansion: name <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
-            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
         }
         # Handle dnvm name <name> [switches...] -r <runtime>
         "^name (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
@@ -152,7 +174,21 @@ function DnvmTabExpansion($lastBlock) {
             DebugMessage "DnvmExpansion: run <VersionOrAlias>; name=$($matches['name'])"
             getAliasesAndVersions | filterMatches $matches['name']
         }
-
+        # Handle dnvm run <cmd> <version> [switches...] -<switch>
+        "^run (?<name>\S*)\s+(?<version>\S*).*\s(?<switch>-\S*)$" {
+            DebugMessage "DnvmExpansion: run <name> <version> -<switch>; name=$($matches['name']); version=$($matches['version']); switch=$($matches['switch'])"
+            @('-arch', '-r') | filterMatches $matches['switch']
+        }
+        # Handle dnvm run <name> <version> [switches...] -arch <arch>
+        "^run (?<name>\S*)\s+(?<version>\S*).*\s-arch\s*(?<arch>\S*)$" {
+            DebugMessage "DnvmExpansion: run <name> <version> -arch <arch>; name=$($matches['name']); version=$($matches['version']); arch=$($matches['arch'])"
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+        }
+        # Handle dnvm run <name> <version> [switches...] -r <runtime>
+        "^run (?<name>\S*)\s+(?<version>\S*).*\s-r\s*(?<runtime>\S*)$" {
+            DebugMessage "DnvmExpansion: run <name> <version> -r <runtime>; name=$($matches['name']); version=$($matches['version']); runtime=$($matches['runtime'])"
+            getRuntimes | filterMatches $matches['runtime'] 
+        }  
 
         ##########################################
         #
@@ -182,7 +218,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm upgrade <alias> [switches...] -arch <arch>
         "^upgrade ((?<alias>\S*)?.*\s)?-arch\s*(?<arch>\S*)$" {
             DebugMessage "DnvmExpansion: upgrade <alias> -arch <arch>; alias=$($matches['alias']); arch=$($matches['arch'])"
-            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
         }
         # Handle dnvm upgrade <alias> [switches...] -r <runtime>
         "^upgrade ((?<alias>\S*)?.*\s)?-r\s*(?<runtime>\S*)$" {
@@ -208,7 +244,7 @@ function DnvmTabExpansion($lastBlock) {
         # Handle dnvm use <VersionOrAlias> [switches...] -arch <arch>
         "^use (?<name>\S*).*\s-arch\s*(?<arch>\S*)$" {
             DebugMessage "DnvmExpansion: use <name> -arch <arch>; name=$($matches['name']); arch=$($matches['arch'])"
-            @('x86', 'x64') | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
+            getArchitectures | filterMatches $matches['arch'] # values taken from inspecting dnvm.ps1 (look for ValidateSet on $architecture parameters)
         }
         # Handle dnvm use <VersionOrAlias> [switches...] -r <runtime>
         "^use (?<name>\S*).*\s-r\s*(?<runtime>\S*)$" {
@@ -248,6 +284,9 @@ function getVersions(){
 }
 function getRuntimes(){
     @('clr', 'coreclr') # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
+}
+function getArchitectures(){
+    @('x64', 'x86', 'arm') # values taken from inspecting dnvm.ps1 (look for ValidateSet on $runtime parameters)
 }
 
 # TODO - look at posh-git/posh-hg to link with powertab
