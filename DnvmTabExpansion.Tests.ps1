@@ -11,6 +11,9 @@ Import-Module "$here\PesterMatchArray.psm1" -Force
 #     It "fails again!" {
 #         $false | Should Be $true
 #     }
+#     It "doesn't match the array" {
+#        @("one", "two") | Should MatchArray @("One", "Two", "Three")
+#     }
 # }
 Describe "dnvm <cmd>" {
     It "returns a full list when no input" {
