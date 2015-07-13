@@ -25,7 +25,7 @@
 			"problemMatcher": {
 				"owner": "pester",
 				"pattern": {
-					"regexp": "(.*);(.*);(.*;.*)",
+					"regexp": "(.+);(.+);(.*)",
 					"file": 1,
 					"line": 2,
 					"message": 3					
