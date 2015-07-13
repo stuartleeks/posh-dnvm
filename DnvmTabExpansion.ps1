@@ -57,10 +57,6 @@ function DnvmTabExpansion($lastBlock) {
             DebugMessage "DnvmExpansion: exec <VersionOrAlias>; name=$($matches['name'])"
             getAliasesAndVersions | filterMatches $matches['name']
         }
-        "^exec (?<name>\S*)$" {
-            DebugMessage "DnvmExpansion: exec <VersionOrAlias>; name=$($matches['name'])"
-            getAliasesAndVersions | filterMatches $matches['name']
-        }
         # Handle dnvm exec <cmd> <version> [switches...] -<switch>
         "^exec (?<name>\S*)\s+(?<version>\S*).*\s(?<switch>-\S*)$" {
             DebugMessage "DnvmExpansion: exec <name> <version> -<switch>; name=$($matches['name']); version=$($matches['version']); switch=$($matches['switch'])"
