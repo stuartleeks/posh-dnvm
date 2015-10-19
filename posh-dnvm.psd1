@@ -12,7 +12,7 @@
 RootModule = 'posh-dnvm'
 
 # Version number of this module.
-ModuleVersion = '1.0.0'
+ModuleVersion = '1.0.0.8'
 
 # ID used to uniquely identify this module
 GUID = '898bf5e9-021e-455e-b304-cd4bc66eb570'
@@ -83,8 +83,29 @@ ModuleList = @('posh-dnvm.psm1')
 # List of all files packaged with this module
 # FileList = @()
 
-# Private data to pass to the module specified in RootModule/ModuleToProcess
-# PrivateData = ''
+# Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
+PrivateData = @{
+
+    PSData = @{
+
+        # Tags applied to this module. These help with module discovery in online galleries.
+        Tags = @('dnvm', 'tab completion')
+
+        # A URL to the license for this module.
+        LicenseUri = 'https://github.com/stuartleeks/posh-dnvm/blob/master/LICENSE.md'
+
+        # A URL to the main website for this project.
+        ProjectUri = 'https://github.com/stuartleeks/posh-dnvm'
+
+        # A URL to an icon representing this module.
+        # IconUri = ''
+
+        # ReleaseNotes of this module
+        # ReleaseNotes = ''
+
+    } # End of PSData hashtable
+
+} # End of PrivateData hashtable
 
 # HelpInfo URI of this module
 # HelpInfoURI = ''
